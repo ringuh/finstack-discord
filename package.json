@@ -1,0 +1,31 @@
+{
+  "name": "finstack-discord",
+  "version": "1.0.0",
+  "description": "finstack discord bot",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ringuh/finstack-discord.git"
+  },
+  "keywords": [
+    "discord",
+    "finstack"
+  ],
+  "author": "rinku",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ringuh/finstack-discord/issues"
+  },
+  "homepage": "https://github.com/ringuh/finstack-discord#readme",
+  "dependencies": {
+    "@typegoose/typegoose": "^6.4.0",
+    "@types/mongoose": "^5.7.12",
+    "@types/node": "^13.13.1",
+    "chalk": "^4.0.0",
+    "discord.js": "^12.2.0",
+    "mongoose": "^5.9.10"
+  }
+}
