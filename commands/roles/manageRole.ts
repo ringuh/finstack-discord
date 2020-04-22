@@ -5,16 +5,13 @@ import { ServerRole } from "../../models";
 
 
 export default {
-    name: ['managerole', 'mr'],
-    description: 'Toggles role requests',
-    args: "<role> [channel] [adminrole]",
+    name: ['managerole'],
+    description: 'Toggles role requests (admin)',
+    args: "<role> [channel] [officer_role]",
     async execute(message: Message, args: string[]) {
         if (!isAdmin(message, true)) return false;
         if (args.length < 1) return usageMessage(message, this);
-
-        // make sure you can use roles without pinging everyone
-        // if (!args[0].startsWith('<@&') && !args[0].startsWith('@')) args[0] = `@${args[0]}`;
-        // if (!args[2].startsWith('<@&') && !args[2].startsWith('@')) args[2] = `@${args[2]}`;
+        
         const [text, users, channels, roles] = StripMentions(args, message.guild);
 
         let [targetRole, adminRole, excess] = roles;

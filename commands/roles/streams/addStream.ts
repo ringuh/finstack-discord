@@ -5,7 +5,7 @@ import { config } from '../../../models';
 import { botPermission } from '../../../funcs/commandTools';
 
 export default {
-    name: ['cmds'],
+    name: ['addstream'],
     description: 'Lists available commands',
     args: false,
     execute(message: Message) {

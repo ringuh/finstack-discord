@@ -10,12 +10,15 @@ import { TextChannel } from 'discord.js';
 const client = new Client();
 const commands = new Collection();
 
+const id = Math.random();
+
 const loadCommands = (filePath: string) => {
     const folders = fs.readdirSync(filePath, { withFileTypes: true }).filter(file => file.isDirectory());
     const commandFiles = fs.readdirSync(filePath, { withFileTypes: true }).filter(file => file.name.endsWith('.ts'));
     for (const file of commandFiles) {
         const command = require(path.join(filePath, file.name)).default;
         command.name?.forEach((al: string) => commands.set(al, command))
+        console.log(command.name)
     }
     folders.forEach(folder => loadCommands(require('path').join(filePath, folder.name)))
 };
@@ -52,6 +55,7 @@ client.on('message', message => {
     }).filter(arg => arg)
 
     try {
+        console.log(id)
         let cmd: any = commands.get(command)
         if (botPermission(message, cmd.permissions))
             cmd.execute(message, args, parameters);

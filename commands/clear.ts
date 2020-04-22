@@ -5,8 +5,8 @@ const { isAdmin, usageMessage } = require('../funcs/commandTools')
 
 export default {
     name: ['clear'],
-    description: 'Clears comments (admin)',
-    args: "[comment_id] [+-count]",
+    description: 'Clears comments (negative number clears comments after starting point) (admin)',
+    args: "[comment_id] <count>",
     permissions: ["MANAGE_MESSAGES"],
     async execute(message: Message, args: string[]) {
         if (!isAdmin(message, true)) return false
