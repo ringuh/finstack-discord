@@ -1,4 +1,4 @@
-import { ServerRole } from "../../models";
+import { ServerRole, config } from "../../models";
 import { Message } from "discord.js";
 
 export default {
@@ -10,7 +10,7 @@ export default {
 		const serverRoles = await ServerRole.find({ server: message.guild.id });
 
 		const text = ['Available roles:', "----------------", '']
-		const content = serverRoles.map(async serverRole => {
+		serverRoles.map(async serverRole => {
 			const role = message.guild.roles.cache.get(serverRole.role);
 			const channel = message.guild.channels.cache.get(serverRole.channel);
 			const adminRole = message.guild.roles.cache.get(serverRole.admin);
@@ -24,10 +24,10 @@ export default {
 			return text.push(`'${role.name}'`)
 		});
 		
-		if (!serverRoles.length) text.push(`no roles found.`, `enable roles to request with !managerole`)
+		if (!serverRoles.length) text.push(`no roles found.`, `enable roles to request with ${config.prefix}managerole`)
 		text.push(``, 'usage:',
-			'!requestrole availableRole',
-			'!requestrole availableRoleRequiringApproval | message for the one approvings',
+			`${config.prefix}requestrole availableRole`,
+			`${config.prefix}requestrole availableRoleRequiringApproval | message with the request`,
 		);
 		message.channel.send(text.join("\n"), { code: true }).then(msg => msg.bin(message));
 	},

@@ -6,19 +6,17 @@ import { botPermission } from './funcs/commandTools';
 import './extensions/message.extension'
 import { DMChannel } from 'discord.js';
 import { TextChannel } from 'discord.js';
+import { initStreams } from './funcs/streams';
 
 const client = new Client();
 const commands = new Collection();
-
-const id = Math.random();
 
 const loadCommands = (filePath: string) => {
     const folders = fs.readdirSync(filePath, { withFileTypes: true }).filter(file => file.isDirectory());
     const commandFiles = fs.readdirSync(filePath, { withFileTypes: true }).filter(file => file.name.endsWith('.ts'));
     for (const file of commandFiles) {
         const command = require(path.join(filePath, file.name)).default;
-        command.name?.forEach((al: string) => commands.set(al, command))
-        console.log(command.name)
+        command.name?.forEach((al: string) => commands.set(al, command));
     }
     folders.forEach(folder => loadCommands(require('path').join(filePath, folder.name)))
 };
@@ -55,7 +53,6 @@ client.on('message', message => {
     }).filter(arg => arg)
 
     try {
-        console.log(id)
         let cmd: any = commands.get(command)
         if (botPermission(message, cmd.permissions))
             cmd.execute(message, args, parameters);
@@ -68,6 +65,7 @@ client.on('message', message => {
 
 client.once('ready', async () => {
     console.log('Finstack bot running!');
+    initStreams(client);
 });
 
 client.login(config.discord_token).catch(err => console.log(err.message));

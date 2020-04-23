@@ -6,4 +6,7 @@ export interface ConfigInterface {
     bypass_bots: string[];
     database: string;
     message_lifespan: number;
+    twitch_interval: number;
+    twitch_clientID: string;
+    twitch_clientSecret: string;
 }

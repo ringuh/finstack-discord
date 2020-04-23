@@ -2,7 +2,7 @@ import { config } from './models';
 import { Client } from 'discord.js';
 import './extensions/message.extension'
 
-
+// pm2 start ts-node --name repeat -- -P tsconfig.json ./repeat.ts
 const client = new Client();
 
 

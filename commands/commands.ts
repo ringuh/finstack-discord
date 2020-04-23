@@ -8,7 +8,6 @@ export default {
     description: 'Lists available commands',
     args: false,
     execute(message: Message, args: string[]) {
-        console.log("hey")
         var reply = [`Available ${config.prefix}${this.name[0]}:`]
         const dirs = (filePath) => {
             var replies = []

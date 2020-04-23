@@ -1,36 +1,47 @@
+import { Message } from "discord.js";
+import { Setting } from "../../../models/settings";
+import { StripMentions } from "../../../funcs/mentions";
+import { isAdmin, usageMessage } from "../../../funcs/commandTools";
+import { config, twitchClient } from "../../../models";
+import { SettingKey } from "../../../models/enums/settingKey.enum";
+import { Streamer } from "../../../models/stream";
+import { StreamPlatform } from "../../../models/enums/streamPlatform.enum";
 
-import path from 'path';
-import { Message } from 'discord.js';
-import { config } from '../../../models';
-import { botPermission } from '../../../funcs/commandTools';
+
 
 export default {
     name: ['addstream'],
-    description: 'Lists available commands',
-    args: false,
-    execute(message: Message) {
-        var reply = [`Available ${config.prefix}${this.name[0]}:`]
-        const dirs = (filePath) => {
-            var replies = []
-            const folders = require('fs').readdirSync(filePath, { withFileTypes: true }).filter(file => file.isDirectory() && file.name !== 'hidden');
-            const commandFiles = require('fs').readdirSync(filePath, { withFileTypes: true }).filter(file => file.name.endsWith('.ts'));
+    description: 'Adds a stream to be tracked (admin)',
+    args: `<${Object.keys(StreamPlatform).join(" / ")}> <stream> [#channel]`,
+    async execute(message: Message, args: string[]) {
+        if (!isAdmin(message, true)) return false
+        if (args.length < 2) return usageMessage(message, this);
 
-            for (const file of commandFiles) {
-                const cmd = require(path.join(filePath, file.name)).default;
-                if (!cmd.hidden && botPermission(message, cmd.permissions, false))
-                    replies.push(`${config.prefix}${cmd.name.join(" / ")} ${cmd.args ? cmd.args + " //" : '//'} ${cmd.description}`)
+        const setting = await Setting.findOne({ server: message.guild.id, key: SettingKey.stream_channel })
+        if (!setting) return message.channel.send(`Default stream channel hasn't been set yet\nuse: ${config.prefix}streamchannel #channel`, { code: true }).then(msg => msg.expire(message));
+
+        const platform = StreamPlatform[args[0].toLowerCase()];
+        if (!platform) return message.channel.send(`Invalid streaming platform '${args[0]}'`, { code: true }).then(msg => msg.expire(message))
+
+        args = args.slice(1)
+        const [text, users, channels, roles] = StripMentions(args, message.guild);
+        const channel = channels[0];
+        const channelMsg = channel ? `to #${channel.name}` : '';
+
+        text.split(" ").map(async name => {
+            const streamName = name.toLowerCase()
+            const streamer = await Streamer.findOne({ server: message.guild.id, platform: platform, name: streamName })
+            if (streamer) return message.channel.send(`Stream '${streamer.name}' @ ${streamer.platform} already exists.`, { code: true }).then(msg => msg.expire(message))
+
+            if (platform === StreamPlatform.twitch) {
+                const twitchUser = await twitchClient.helix.users.getUserByName(streamName);
+                if (!twitchUser) return message.channel.send(`Twitch doesn't have user '${streamName}'`, { code: true }).then(msg => msg.expire(message))
             }
-
-            folders.forEach(folder => {
-                let r = dirs(require('path').join(filePath, folder.name))
-                if (r.length) replies = [...replies, "", folder.name, "-------", ...r]
-            })
-            return replies
-        };
-
-        reply = [...reply, ...dirs(__dirname)]
-
-        message.channel.send(reply.join("\n"), { code: "js" }).then()
-
-    },
+            Streamer.create({ server: message.guild.id, platform: platform, name: streamName, channel: channel?.id }).then(addedStream =>
+                message.channel.send(`Added stream '${addedStream.name}' @ ${addedStream.platform} ${channelMsg}`, { code: true }).then(msg => msg.bin(message)));
+        });
+    }
 };
+
+
+
