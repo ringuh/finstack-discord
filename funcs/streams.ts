@@ -46,7 +46,7 @@ async function twitchStreams(client: Client) {
 
             if (!userStream) continue;
 
-            const existingMessage = await channel.messages.fetch(streamer.lastMessageId).catch(err => console.log("fetch", err.message))
+            const existingMessage = await channel.messages.cache.get(streamer.lastMessageId)
             const embedMessage = twitchMessage(twitchUser, userStream);
 
             if (existingMessage)

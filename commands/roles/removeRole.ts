@@ -23,7 +23,6 @@ export default {
             const admin = message.member.hasPermission("ADMINISTRATOR") || message.member.roles.cache.get(serverRole.admin);
 
             users.forEach(user => {
-                console.log(user.user.username)
                 const hasRole = user.roles.cache.get(role.id)
                 if (!hasRole) return message.channel.send(`Role '${role.name}' not found on '${user.user.username}'`, { code: true }).then(msg => msg.expire(message));
                 if (!admin && user.id !== message.member.id)

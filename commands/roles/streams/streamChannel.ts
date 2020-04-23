@@ -13,7 +13,7 @@ export default {
         if (!isAdmin(message, true)) return false
         const setting = await Setting.findOne({ server: message.guild.id, key: SettingKey.stream_channel })
         const [text, users, channels, roles] = StripMentions(args, message.guild);
-        console.log(setting)
+        
         if (text && text !== 'reset')
             return message.channel.send(`Command failed. Invalid argument. Valid commands are #channel and 'reset'`, { code: true }).then(msg => msg.expire(message))
 

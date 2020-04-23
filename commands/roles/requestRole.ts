@@ -74,7 +74,7 @@ export default {
                             .then(async collected => {
                                 const reaction = collected.first();
                                 const handler = await reaction.users.fetch().then(users => users.find(user => user.id !== message.author.id));
-                                console.log(handler)
+                                
                                 if (reaction.emoji.name === '🆗') {
                                     user.roles.add(role).then(() => reactionMessage.channel.send(
                                         `${user.user.username} promoted to '${role.name}' by '${handler.username}'`
