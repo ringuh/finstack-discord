@@ -15,7 +15,7 @@ export default {
         const setting = await Setting.findOne({ server: message.guild.id, key: SettingKey.stream_channel })
         const streamers = await Streamer.find({ server: message.guild.id });
 
-        const defaultChannel = message.guild.channels.cache.get(setting.value.toString());
+        const defaultChannel = message.guild.channels.cache.get(setting?.value.toString());
         if (!defaultChannel) return message.channel.send(`Default stream channel not found.\nuse: ${config.prefix}streamchannel #channel`, { code: true }).then(msg => msg.expire(message));
 
         const text = ['Streams:', "----------------", '']
