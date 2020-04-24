@@ -7,6 +7,7 @@ import './extensions/message.extension'
 import { DMChannel } from 'discord.js';
 import { TextChannel } from 'discord.js';
 import { initStreams } from './funcs/streams';
+import { ClientUser } from 'discord.js';
 
 const client = new Client();
 const commands = new Collection();
@@ -66,6 +67,15 @@ client.on('message', message => {
 client.once('ready', async () => {
     console.log('Finstack bot running!');
     initStreams(client);
+
+   setBotActivity(client.user);
 });
 
 client.login(config.discord_token).catch(err => console.log(err.message));
+
+
+async function setBotActivity(bot:ClientUser) {
+    const activityText= `${config.prefix}cmds`
+    await bot.setActivity(activityText, { type: 'LISTENING' });
+    setInterval(async () => await bot.setActivity(activityText, { type: 'LISTENING' }).catch(console.error), 6000)
+}
