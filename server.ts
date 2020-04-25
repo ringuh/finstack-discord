@@ -8,6 +8,8 @@ import { DMChannel } from 'discord.js';
 import { TextChannel } from 'discord.js';
 import { initStreams } from './funcs/streams';
 import { ClientUser } from 'discord.js';
+import { cpus } from 'os';
+import { commandRestricted } from './funcs/commandRestrictions';
 
 const client = new Client();
 const commands = new Collection();
@@ -23,7 +25,7 @@ const loadCommands = (filePath: string) => {
 };
 loadCommands(path.join(__dirname, "commands"))
 
-client.on('message', message => {
+client.on('message', async message => {
     // ignore non-prefix and other bots excluding REPEAT BOT 621467973122654238
     if (message.channel.type !== "text" ||
         !message.content.startsWith(config.prefix) ||
@@ -55,8 +57,10 @@ client.on('message', message => {
 
     try {
         let cmd: any = commands.get(command)
-        if (botPermission(message, cmd.permissions))
+        if (botPermission(message, cmd.permissions) && await commandRestricted(message, command)){
             cmd.execute(message, args, parameters);
+        }
+            
     } catch (error) {
         console.error(error.message);
         message.reply(`Error: ${error.message}`);

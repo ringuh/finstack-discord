@@ -1,4 +1,4 @@
-export enum CommandRestriction {
+export enum CommandRestrictionType {
     blacklist = 'blacklist',
     whitelist = 'whitelist',
 }
