@@ -13,7 +13,7 @@ export default {
         if (args.length < 1) return usageMessage(message, this)
 
         const msg_id = args[0].length > 10 ? args[0] : null
-        const last_arg: string = args[args.length - 1]
+        const last_arg: string = args.last()
         if (last_arg.length > 10) return usageMessage(message, this)
         let count = last_arg.length > 10 ? 0 : Math.abs(parseInt(last_arg))
         count = count > 100 ? 100 : count;

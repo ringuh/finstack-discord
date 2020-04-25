@@ -1,12 +1,8 @@
 import { Message } from "discord.js";
-import { User } from "discord.js";
-import { isAdmin } from "../funcs/commandTools";
 import { ClientUser } from "discord.js";
 import { Collection } from "discord.js";
 import { MessageReaction } from "discord.js";
 import { config } from "../models";
-import { userInfo } from "os";
-import { findSourceMap } from "module";
 
 declare module 'discord.js' {
     interface Message {
@@ -18,8 +14,9 @@ declare module 'discord.js' {
         expire(prevMsg?: Message, keep?: boolean, expire?: number): void
         bin(prevMsg?: Message, expire?: boolean): void
     }
-
 }
+
+
 
 Message.prototype.expire = async function (prevMsg?: Message, keep?: boolean, expire: number = config.message_lifespan, deleter?: ClientUser) {
     prevMsg?.channel.stopTyping(true)
@@ -47,7 +44,7 @@ Message.prototype.bin = async function (prevMsg?: Message, expire?: boolean) {
         .then(async (collected: Collection<String, MessageReaction>) => {
             const reaction = collected.last()
             const deleter = await reaction.users.fetch().then(users => users.find(user => user.id !== this.author.id));
-            
+
             if (reaction.emoji.name === binIcon)
                 this.expire(prevMsg, false, 1, deleter)
         });
@@ -55,4 +52,5 @@ Message.prototype.bin = async function (prevMsg?: Message, expire?: boolean) {
         this.expire(prevMsg)
     }
 }
+
 

@@ -3,7 +3,7 @@ import { Client, Collection, Message } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import { botPermission } from './funcs/commandTools';
-import './extensions/message.extension'
+import './extensions'
 import { DMChannel } from 'discord.js';
 import { TextChannel } from 'discord.js';
 import { initStreams } from './funcs/streams';

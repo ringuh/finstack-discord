@@ -12,6 +12,7 @@ import { HelixStream, HelixUser } from "twitch";
 import datetimeDifference from "datetime-difference";
 
 interface defaultChannel {
+    server: Guild,
     channel: TextChannel,
     name: string,
     streamCount: number,
@@ -22,13 +23,26 @@ async function twitchStreams(client: Client) {
     if (!streamers.length) return false;
     const twitchUsers = await twitchClient.helix.users.getUsersByNames(streamers.map(streamer => streamer.name));
 
+    const defaultSettings = await Setting.find({ key: SettingKey.stream_channel });
     const defaultChannels = {}
-
+    
+    defaultSettings.forEach(async setting => {
+        const guild = client.guilds.resolve(setting.server.toString());
+        if(!guild) return await setting.remove();
+        const channel = guild.channels.cache.get(setting.value.toString())
+        if(!channel) return await setting.remove();
+        defaultChannels[channel.id] = {
+            server: guild,
+            channel: channel,
+            name: setting.valueB,
+            streamCount: 0
+        }
+    });
+    
     for (let i in twitchUsers) {
         const twitchUser = twitchUsers[i];
         const streamerEntities = streamers.filter(streamer => streamer.name === twitchUser.name.toLowerCase());
         const userStream = await twitchUser.getStream();
-
         for (let j in streamerEntities) {
             const streamer = streamerEntities[j];
             const discordServer = client.guilds.resolve(streamer.server);
@@ -47,10 +61,9 @@ async function twitchStreams(client: Client) {
             if (!channel) { 
                 channel = asTextChannel(discordServer.channels.cache.get(setting.value.toString())); 
                 if (!channel) continue;
-                if(userStream){
-                    defaultChannels[channel.id] = defaultChannels[channel.id] || { channel: channel, name: setting.valueB, streamCount: 0 }
-                    defaultChannels[channel.id].streamCount++;
-                }
+
+                //defaultChannels[channel.id] = defaultChannels[channel.id] || { channel: channel, name: setting.valueB, streamCount: 0 }
+                if(userStream) defaultChannels[channel.id].streamCount++;
             }
             
 
