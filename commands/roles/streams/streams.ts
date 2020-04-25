@@ -25,8 +25,8 @@ export default {
             if (streamer.channel && !channel) {
                 await streamer.updateOne({ channel: null, lastMessageId: null });
             }
-            const channelTxt = channel?.name || defaultChannel.name;
-            const seenTxt = streamer.lastSeen ? printTimeDiff(datetimeDifference(new Date(streamer.lastSeen), new Date())) : 'never';            
+            const channelTxt = channel?.name || setting.valueB || defaultChannel.name;
+            const seenTxt = streamer.lastSeen ? printTimeDiff(datetimeDifference(new Date(streamer.lastSeen), new Date())) + " ago" : 'never';            
             
             if (streamer.platform === StreamPlatform.twitch)
                 return text.push(`twitch.tv/${streamer.name} |  #${channelTxt} | (seen: ${seenTxt})`)
