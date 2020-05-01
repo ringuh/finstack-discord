@@ -26,6 +26,9 @@ const loadCommands = (filePath: string) => {
 loadCommands(path.join(__dirname, "commands"))
 
 client.on('message', async message => {
+    if(message.content.includes("shadowland child game"))
+        message.delete();
+
     // ignore non-prefix and other bots excluding REPEAT BOT 621467973122654238
     if (message.channel.type !== "text" ||
         !message.content.startsWith(config.prefix) ||
