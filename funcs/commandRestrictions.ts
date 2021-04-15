@@ -13,7 +13,7 @@ async function commandRestricted(message: Message, command: string) {
     const commandChannelRestriction = await CommandRestriction.findOne({ server: message.guild.id, command: command.toLowerCase(), channel: message.channel.id });
 
     let canPass = true;
-    if (isAdmin(message)) return true;
+    if (isAdmin(message, false)) return true;
     if (commandChannelRestriction) canPass = commandChannelRestriction.type !== CommandRestrictionType.blacklist;
     else if (commandServerRestriction) canPass = commandServerRestriction.type !== CommandRestrictionType.blacklist;
     else if (serverRestriction) canPass = false;
